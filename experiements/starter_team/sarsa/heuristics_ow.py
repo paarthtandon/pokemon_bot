@@ -10,7 +10,7 @@ import json
 
 EXPERIEMENT_NAME = 'heuristics_ow_sarsa'
 EXPERIEMENT_PATH = f'results/{EXPERIEMENT_NAME}'
-TRAIN_STEPS = 100#500_000
+TRAIN_STEPS = 500_000
 EVAL_STEPS = 100
 
 with open('../team.txt', 'r') as teamf:
