@@ -5,7 +5,7 @@ from poke_env.player_configuration import PlayerConfiguration
 import pickle
 
 
-Q_PATH = 'sarsa/results/random_sarsa/q.pickle'
+Q_PATH = 'sarsa/results/heuristics_sarsa/q.pickle'
 BATTLES = 100
 
 with open(Q_PATH, 'rb') as f:
@@ -43,25 +43,25 @@ def evaluate(q, player, n_battle):
         'n_wins': n_wins
     }
 
-OPPONENT = RandomPlayer(
-    battle_format="gen4ou",
-    team=team
-)
+# OPPONENT = RandomPlayer(
+#     battle_format="gen4ou",
+#     team=team
+# )
 
 # OPPONENT = MaxDamagePlayer(
 #     battle_format="gen4ou",
 #     team=team
 # )
 
-# OPPONENT = SimpleHeuristicsPlayer(
-#     battle_format="gen8ou",
-#     team=team
-# )
+OPPONENT = SimpleHeuristicsPlayer(
+    battle_format="gen8ou",
+    team=team
+)
 
 pc = PlayerConfiguration('PLAYER', '')
 PLAYER = RLPlayer(
     opponent=OPPONENT,
-    battle_format="gen4ou",
+    battle_format="gen8ou",
     team=team,
     player_configuration=pc
 )
