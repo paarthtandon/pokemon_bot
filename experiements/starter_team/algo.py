@@ -48,32 +48,32 @@ class QLearning:
         steps = []
         cur_reward = 0
 
-        s, _, _, _, = player.step(0)
+        s, _, battle_over, _, = player.step(0)
         for i in tqdm(range(n_steps)):
-            if player.current_battle.available_moves:
-                a = self.pol.act(s, player.current_battle.available_switches)
-            else:
-                a = self.pol.act(s, player.current_battle.available_switches, only_switch=True)
             try:
+                if player.current_battle.available_moves:
+                    a = self.pol.act(s, player.current_battle.available_switches)
+                else:
+                    a = self.pol.act(s, player.current_battle.available_switches, only_switch=True)
+                if battle_over:
+                    player.reset()
                 sp, r, battle_over, _ = player.step(a)
+                self.q_step(s, a, r, sp)
+                s = sp
+                cur_reward += r
+                rewards.append(cur_reward)
+                if player.n_finished_battles != 0:
+                    win_rate.append(
+                        player.n_won_battles / player.n_finished_battles
+                    )
+                else:
+                    win_rate.append(0)
+                steps.append(i)
+                if self.it % 1000 == 0:
+                    print(f'Current win rate: {win_rate[-1]} ({player.n_won_battles}/{player.n_finished_battles})')
             except:
+                print('failed step')
                 continue
-            self.q_step(s, a, r, sp)
-            s = sp
-            cur_reward += r
-            rewards.append(cur_reward)
-            if player.n_finished_battles != 0:
-                win_rate.append(
-                    player.n_won_battles / player.n_finished_battles
-                )
-            else:
-                win_rate.append(0)
-            steps.append(i)
-            if battle_over:
-                player.reset()
-            
-            if self.it % 1000 == 0:
-                print(f'Current win rate: {win_rate[-1]} ({player.n_won_battles}/{player.n_finished_battles})')
         
         n_battles = player.n_finished_battles
         n_wins = player.n_won_battles
