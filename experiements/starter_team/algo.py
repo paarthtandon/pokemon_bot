@@ -68,6 +68,9 @@ class QLearning:
             steps.append(i)
             if battle_over:
                 player.reset()
+            
+            if self.it % 1000 == 0:
+                print(f'Current win rate: {win_rate[-1]}')
         
         n_battles = player.n_finished_battles
         n_wins = player.n_won_battles
