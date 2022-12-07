@@ -44,17 +44,27 @@ class QLearning:
     
     def train(self, player, n_steps):
         rewards = []
+        win_rate = []
         steps = []
         cur_reward = 0
 
         s, _, _, _, = player.step(0)
         for i in tqdm(range(n_steps)):
-            a = self.pol.act(s)
+            if player.current_battle.available_moves:
+                a = self.pol.act(s)
+            else:
+                a = self.pol.act(s, only_switch=True)
             sp, r, battle_over, _ = player.step(a)
             self.q_step(s, a, r, sp)
             s = sp
             cur_reward += r
             rewards.append(cur_reward)
+            if player.n_finished_battles != 0:
+                win_rate.append(
+                    player.n_won_battles / player.n_finished_battles
+                )
+            else:
+                win_rate.append(0)
             steps.append(i)
             if battle_over:
                 player.reset()
@@ -65,6 +75,7 @@ class QLearning:
         return {
             'steps': steps,
             'rewards': rewards,
+            'win_rate': win_rate,
             'n_battles': n_battles,
             'n_wins': n_wins
         }

@@ -5,7 +5,7 @@ from poke_env.player_configuration import PlayerConfiguration
 import pickle
 
 
-Q_PATH = 'sarsa/results/heuristics_sarsa/q.pickle'
+Q_PATH = 'q_learning/results/heuristics_ql/q.pickle'
 BATTLES = 100
 
 with open(Q_PATH, 'rb') as f:

@@ -3,7 +3,7 @@ sys.path.append('..')
 
 from poke_env.player import SimpleHeuristicsPlayer
 from poke_env.player_configuration import PlayerConfiguration
-from env import RLPlayer
+from env import RLPlayerCustom
 from algo import QLearning
 from matplotlib import pyplot as plt
 import json
@@ -24,7 +24,7 @@ player = SimpleHeuristicsPlayer(
 )
 
 pc = PlayerConfiguration(EXPERIEMENT_NAME, '')
-rl_player = RLPlayer(
+rl_player = RLPlayerCustom(
     opponent=player,
     battle_format="gen8ou",
     team=team,
@@ -38,12 +38,20 @@ plt.title(f'QL vs. {EXPERIEMENT_NAME}')
 plt.xlabel('steps')
 plt.ylabel('reward')
 plt.plot(train_results['steps'], train_results['rewards'])
-plt.savefig(f'{EXPERIEMENT_PATH}/training.png')
+plt.savefig(f'{EXPERIEMENT_PATH}/train_rewards.png')
+
+plt.cla()
+plt.title(f'QL vs. {EXPERIEMENT_NAME}')
+plt.xlabel('steps')
+plt.ylabel('win rate')
+plt.plot(train_results['steps'], train_results['win_rate'])
+plt.savefig(f'{EXPERIEMENT_PATH}/train_win_r.png')
 
 with open(f'{EXPERIEMENT_PATH}/train.json', 'w') as f:
     json.dump({
         'steps': train_results['steps'],
-        'rewards': train_results['rewards']
+        'rewards': train_results['rewards'],
+        'win_rate': train_results['win_rate']
     }, f)
 
 test_results = ql.eval(rl_player, EVAL_STEPS)
