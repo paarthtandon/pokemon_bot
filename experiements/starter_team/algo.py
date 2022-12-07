@@ -1,6 +1,6 @@
 from tqdm import tqdm
 from pol import EpsilonPolicy, GreedyPolicy
-import pickle
+import ujson
 
 class QLearning:
 
@@ -108,9 +108,8 @@ class QLearning:
         }
     
     def save_q(self, fname):
-        f = open(fname, 'ab')
-        pickle.dump(self.q, f)
-        f.close()
+        with open(fname, 'w') as f:
+            ujson.dump(self.q, f)
 
 
 class SARSA:

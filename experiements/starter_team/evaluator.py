@@ -2,17 +2,15 @@ from pol import GreedyPolicy
 from env import RLPlayer, MaxDamagePlayer
 from poke_env.player import Player, RandomPlayer, SimpleHeuristicsPlayer
 from poke_env.player_configuration import PlayerConfiguration
-import pickle
+from pol import load_q
 
 
-Q_PATH = 'q_learning/results/max_damage_ql/q.pickle'
+Q_PATH = 'q_learning/results/random_ql/q.json'
 BATTLES = 100
 
-with open(Q_PATH, 'rb') as f:
-    q = pickle.load(f)
 with open('team.txt', 'r') as f:
     team = f.read()
-
+q = load_q(Q_PATH)
 print(q)
 
 def evaluate(q, player, n_battle):
@@ -26,7 +24,6 @@ def evaluate(q, player, n_battle):
             a = pol.act(s, player.current_battle.available_switches)
         else:
             a = pol.act(s, player.current_battle.available_switches, only_switch=True)
-        a = pol.act(s)
         s, _, over, _ = player.step(a)
         if over:
             battles += 1
@@ -41,15 +38,15 @@ def evaluate(q, player, n_battle):
         'n_wins': n_wins
     }
 
-# OPPONENT = RandomPlayer(
-#     battle_format="gen8ou",
-#     team=team
-# )
-
-OPPONENT = MaxDamagePlayer(
+OPPONENT = RandomPlayer(
     battle_format="gen8ou",
     team=team
 )
+
+# OPPONENT = MaxDamagePlayer(
+#     battle_format="gen8ou",
+#     team=team
+# )
 
 # OPPONENT = SimpleHeuristicsPlayer(
 #     battle_format="gen8ou",

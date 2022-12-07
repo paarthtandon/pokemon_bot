@@ -1,5 +1,13 @@
 import random
 from env import showdown_to_switch, action_to_showdown
+import ujson
+from ast import literal_eval
+
+def load_q(fname):
+    with open(fname, 'r') as f:
+        q = ujson.load(f)
+        q = {literal_eval(k): {literal_eval(j): l for j, l in v.items()} for k, v in q.items()}
+        return q
 
 class EpsilonPolicy:
     def __init__(self, q, e):

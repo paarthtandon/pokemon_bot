@@ -59,5 +59,6 @@ print(f'Eval: {test_results["n_wins"]}/{test_results["n_battles"]}')
 with open(f'{EXPERIEMENT_PATH}/eval.json', 'w') as f:
     json.dump(test_results, f)
 
-ql.save_q(f'{EXPERIEMENT_PATH}/q.pickle')
+print(ql.q)
+ql.save_q(f'{EXPERIEMENT_PATH}/q.json')
 rl_player.close()
