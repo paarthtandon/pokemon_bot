@@ -10,7 +10,7 @@ import json
 
 EXPERIEMENT_NAME = 'random_ql'
 EXPERIEMENT_PATH = f'results/{EXPERIEMENT_NAME}'
-TRAIN_STEPS = 500_000
+TRAIN_STEPS = 50_000
 EVAL_STEPS = 100
 
 with open('../team.txt', 'r') as teamf:
