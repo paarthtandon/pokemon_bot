@@ -50,7 +50,7 @@ class RLPlayerCustom(Gen8EnvSinglePlayer):
             if mon.fainted:
                 current_fainted += 1
         
-        reward = reward + ((current_fainted - last_fainted) * 10)
+        reward = reward + ((current_fainted - last_fainted) * 20)
 
         last_fainted = 0
         for mon in last_battle.team.values():
@@ -61,7 +61,7 @@ class RLPlayerCustom(Gen8EnvSinglePlayer):
             if mon.fainted:
                 current_fainted += 1
         
-        reward = reward + ((current_fainted - last_fainted) * -1)
+        reward = reward + ((current_fainted - last_fainted) * -10)
         
         if current_battle.won:
             reward += 1000
