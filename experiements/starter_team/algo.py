@@ -71,6 +71,7 @@ class QLearning:
             
             if self.it % 1000 == 0:
                 print(f'Current win rate: {win_rate[-1]} ({player.n_won_battles}/{player.n_finished_battles})')
+                player.reset_battles()
         
         n_battles = player.n_finished_battles
         n_wins = player.n_won_battles
