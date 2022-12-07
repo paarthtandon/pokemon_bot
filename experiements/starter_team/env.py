@@ -14,7 +14,7 @@ class RLPlayer(Gen8EnvSinglePlayer):
 
     def calc_reward(self, last_battle, current_battle) -> float:
         return self.reward_computing_helper(
-            current_battle, fainted_value=10.0, victory_value=100.0
+            current_battle, hp_value=1.0, fainted_value=10.0, victory_value=100.0
         )
 
     def embed_battle(self, battle):

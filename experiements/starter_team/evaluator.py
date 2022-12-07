@@ -1,11 +1,11 @@
 from pol import GreedyPolicy
-from env import RLPlayer
+from env import RLPlayer, MaxDamagePlayer
 from poke_env.player import Player, RandomPlayer, SimpleHeuristicsPlayer
 from poke_env.player_configuration import PlayerConfiguration
 import pickle
 
 
-Q_PATH = 'q_learning/results/heuristics_ql/q.pickle'
+Q_PATH = 'q_learning/results/max_damage_ql/q.pickle'
 BATTLES = 100
 
 with open(Q_PATH, 'rb') as f:
@@ -13,13 +13,7 @@ with open(Q_PATH, 'rb') as f:
 with open('team.txt', 'r') as f:
     team = f.read()
 
-class MaxDamagePlayer(Player):
-    def choose_move(self, battle):
-        if battle.available_moves:
-            best_move = max(battle.available_moves, key=lambda move: move.base_power)
-            return self.create_order(best_move)
-        else:
-            return self.choose_random_move(battle)
+print(q)
 
 def evaluate(q, player, n_battle):
     pol = GreedyPolicy(q)
@@ -28,6 +22,10 @@ def evaluate(q, player, n_battle):
     s, _, _, _, = player.step(0)
     print(f'Running battle: {battles}')
     while battles < n_battle:
+        if player.current_battle.available_moves:
+            a = pol.act(s)
+        else:
+            a = pol.act(s, only_switch=True)
         a = pol.act(s)
         s, _, over, _ = player.step(a)
         if over:
@@ -44,19 +42,19 @@ def evaluate(q, player, n_battle):
     }
 
 # OPPONENT = RandomPlayer(
-#     battle_format="gen4ou",
+#     battle_format="gen8ou",
 #     team=team
 # )
 
-# OPPONENT = MaxDamagePlayer(
-#     battle_format="gen4ou",
-#     team=team
-# )
-
-OPPONENT = SimpleHeuristicsPlayer(
+OPPONENT = MaxDamagePlayer(
     battle_format="gen8ou",
     team=team
 )
+
+# OPPONENT = SimpleHeuristicsPlayer(
+#     battle_format="gen8ou",
+#     team=team
+# )
 
 pc = PlayerConfiguration('PLAYER', '')
 PLAYER = RLPlayer(
