@@ -2,6 +2,28 @@ import numpy as np
 from gym.spaces import Space, Box
 from poke_env.player import Gen8EnvSinglePlayer, Player
 
+def showdown_to_switch(switches):
+    pokemon = {
+        'charizard': 4,
+        'venusaur': 5,
+        'blastoise': 6
+    }
+    available = [pokemon[p.species] for p in switches]
+    return available
+
+def action_to_showdown(switches, action):
+    if action < 4:
+        return action
+    pokemon = {
+        4: 'charizard',
+        5: 'venusaur',
+        6: 'blastoise'
+    }
+    for i in range(len(switches)):
+        if pokemon[action] == switches[i].species:
+            return 4 + i
+
+
 class MaxDamagePlayer(Player):
     def choose_move(self, battle):
         if battle.available_moves:

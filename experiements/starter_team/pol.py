@@ -1,23 +1,25 @@
 import random
+from env import showdown_to_switch, action_to_showdown
 
 class EpsilonPolicy:
     def __init__(self, q, e):
         self.pol = q
         self.e = e
 
-    def act(self, s, only_switch=False):
+    def act(self, s, switches, only_switch=False):
         s = tuple(s)
+        available_switches = showdown_to_switch(switches)
+        available_actions = available_switches + [0, 1, 2, 3]
+
         qs = self.pol[s]
         if only_switch:
-            mx = max([qs[a] for a in [4, 5]])
+            mx = max([qs[a] for a in available_switches])
+            actions = available_switches
         else:
-            mx = max([qs[a] for a in range(6)])
+            mx = max([qs[a] for a in available_actions])
+            actions = available_actions
         A = []
         nA = []
-        if only_switch:
-            actions = [4, 5]
-        else:
-            actions = range(6)
         for a in actions:
             if qs[a] == mx:
                 A.append(a)
@@ -27,8 +29,14 @@ class EpsilonPolicy:
         try:
             op = ((1 - self.e) / An) + (self.e / 4)
             if random.random() >= (op * An) and len(nA) != 0:
-                return nA[random.randint(0, len(nA) - 1)]
-            return A[random.randint(0, An - 1)]
+                return action_to_showdown(
+                    switches,
+                    nA[random.randint(0, len(nA) - 1)]
+                )
+            return action_to_showdown(
+                    switches,
+                    A[random.randint(0, An - 1)]
+                )
         except:
             print(A, nA, qs, mx)
             raise Exception()
@@ -37,18 +45,21 @@ class GreedyPolicy:
     def __init__(self, q):
         self.pol = q
     
-    def act(self, s, only_switch=False):
+    def act(self, s, switches, only_switch=False):
         s = tuple(s)
+        available_switches = showdown_to_switch(switches)
+        available_actions = available_switches + [0, 1, 2, 3]
+
         qs = self.pol[s]
         mx = float('-inf')
         mx_a = None
         if only_switch:
-            actions = [4, 5]
+            actions = available_switches
         else:
-            actions = range(6)
+            actions = available_actions
         for a in actions:
             if qs[a] > mx:
                 mx_a = a
                 mx = qs[a]
-        return mx_a
+        return action_to_showdown(switches, mx_a)
             

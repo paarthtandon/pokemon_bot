@@ -23,9 +23,9 @@ def evaluate(q, player, n_battle):
     print(f'Running battle: {battles}')
     while battles < n_battle:
         if player.current_battle.available_moves:
-            a = pol.act(s)
+            a = pol.act(s, player.current_battle.available_switches)
         else:
-            a = pol.act(s, only_switch=True)
+            a = pol.act(s, player.current_battle.available_switches, only_switch=True)
         a = pol.act(s)
         s, _, over, _ = player.step(a)
         if over:

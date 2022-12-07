@@ -25,7 +25,7 @@ class QLearning:
                     for mh in range(4):
                         for oh in range(4):
                             self.q[(mp, op, mh, oh)] = {}
-                            for a in range(6):
+                            for a in range(7):
                                 self.q[(mp, op, mh, oh)][a] = 0
         
         self.pol = EpsilonPolicy(self.q, self.e)
@@ -51,9 +51,9 @@ class QLearning:
         s, _, _, _, = player.step(0)
         for i in tqdm(range(n_steps)):
             if player.current_battle.available_moves:
-                a = self.pol.act(s)
+                a = self.pol.act(s, player.current_battle.available_switches)
             else:
-                a = self.pol.act(s, only_switch=True)
+                a = self.pol.act(s, player.current_battle.available_switches, only_switch=True)
             sp, r, battle_over, _ = player.step(a)
             self.q_step(s, a, r, sp)
             s = sp
@@ -70,7 +70,7 @@ class QLearning:
                 player.reset()
             
             if self.it % 1000 == 0:
-                print(f'Current win rate: {win_rate[-1]}')
+                print(f'Current win rate: {win_rate[-1]} ({player.n_won_battles}/{player.n_finished_battles})')
         
         n_battles = player.n_finished_battles
         n_wins = player.n_won_battles
@@ -90,7 +90,10 @@ class QLearning:
         battles = 0
         s, _, _, _, = player.step(0)
         while battles < n_battle:
-            a = pol.act(s)
+            if player.current_battle.available_moves:
+                a = pol.act(s, player.current_battle.available_switches)
+            else:
+                a = pol.act(s, player.current_battle.available_switches, only_switch=True)
             s, _, over, _ = player.step(a)
             if over:
                 battles += 1
