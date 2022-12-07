@@ -3,7 +3,7 @@ sys.path.append('..')
 
 from poke_env.player import SimpleHeuristicsPlayer
 from poke_env.player_configuration import PlayerConfiguration
-from env import RLPlayerCustom
+from env import RLPlayerCustom, RLPlayer
 from algo import QLearning
 from matplotlib import pyplot as plt
 import json
@@ -24,7 +24,7 @@ player = SimpleHeuristicsPlayer(
 )
 
 pc = PlayerConfiguration(EXPERIEMENT_NAME, '')
-rl_player = RLPlayerCustom(
+rl_player = RLPlayer(
     opponent=player,
     battle_format="gen8ou",
     team=team,
@@ -59,5 +59,5 @@ print(f'Eval: {test_results["n_wins"]}/{test_results["n_battles"]}')
 with open(f'{EXPERIEMENT_PATH}/eval.json', 'w') as f:
     json.dump(test_results, f)
 
-ql.save_q(f'{EXPERIEMENT_PATH}/q.pickle')
+ql.save_q(f'{EXPERIEMENT_PATH}/q.json')
 rl_player.close()

@@ -5,13 +5,12 @@ from poke_env.player_configuration import PlayerConfiguration
 from pol import load_q
 
 
-Q_PATH = 'q_learning/results/random_ql/q.json'
+Q_PATH = 'q_learning/results/max_damage_ql/q.json'
 BATTLES = 100
 
 with open('team.txt', 'r') as f:
     team = f.read()
 q = load_q(Q_PATH)
-print(q)
 
 def evaluate(q, player, n_battle):
     pol = GreedyPolicy(q)
@@ -38,15 +37,15 @@ def evaluate(q, player, n_battle):
         'n_wins': n_wins
     }
 
-OPPONENT = RandomPlayer(
-    battle_format="gen8ou",
-    team=team
-)
-
-# OPPONENT = MaxDamagePlayer(
+# OPPONENT = RandomPlayer(
 #     battle_format="gen8ou",
 #     team=team
 # )
+
+OPPONENT = MaxDamagePlayer(
+    battle_format="gen8ou",
+    team=team
+)
 
 # OPPONENT = SimpleHeuristicsPlayer(
 #     battle_format="gen8ou",
