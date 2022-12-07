@@ -31,7 +31,8 @@ rl_player = RLPlayer(
     player_configuration=pc
 )
 
-ql = QLearning(gamma=1, e_start=1, a_start=1, e_dec=1/(TRAIN_STEPS/2), a_dec=1/(TRAIN_STEPS/2), min_e=0.01, min_a=0.01)
+#ql = QLearning(gamma=1, e_start=1, a_start=1, e_dec=1/(TRAIN_STEPS/2), a_dec=1/(TRAIN_STEPS/2), min_e=0.01, min_a=0.01)
+ql = QLearning(gamma=1, e_start=0.05, a_start=0.01, e_dec=0, a_dec=0)
 train_results = ql.train(rl_player, TRAIN_STEPS)
 
 plt.title(f'QL vs. {EXPERIEMENT_NAME}')
