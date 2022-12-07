@@ -54,7 +54,10 @@ class QLearning:
                 a = self.pol.act(s, player.current_battle.available_switches)
             else:
                 a = self.pol.act(s, player.current_battle.available_switches, only_switch=True)
-            sp, r, battle_over, _ = player.step(a)
+            try:
+                sp, r, battle_over, _ = player.step(a)
+            except:
+                continue
             self.q_step(s, a, r, sp)
             s = sp
             cur_reward += r
