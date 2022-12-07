@@ -1,12 +1,20 @@
 import numpy as np
 from gym.spaces import Space, Box
-from poke_env.player import Gen8EnvSinglePlayer
+from poke_env.player import Gen8EnvSinglePlayer, Player
+
+class MaxDamagePlayer(Player):
+    def choose_move(self, battle):
+        if battle.available_moves:
+            best_move = max(battle.available_moves, key=lambda move: move.base_power)
+            return self.create_order(best_move)
+        else:
+            return self.choose_random_move(battle)
 
 class RLPlayer(Gen8EnvSinglePlayer):
 
     def calc_reward(self, last_battle, current_battle) -> float:
         return self.reward_computing_helper(
-            current_battle, fainted_value=20.0, victory_value=100.0
+            current_battle, fainted_value=10.0, victory_value=100.0
         )
 
     def embed_battle(self, battle):

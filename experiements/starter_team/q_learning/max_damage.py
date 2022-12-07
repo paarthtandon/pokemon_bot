@@ -3,7 +3,7 @@ sys.path.append('..')
 
 from poke_env.player import Player
 from poke_env.player_configuration import PlayerConfiguration
-from env import RLPlayerCustom
+from env import RLPlayerCustom, RLPlayer, MaxDamagePlayer
 from algo import QLearning
 from matplotlib import pyplot as plt
 import json
@@ -12,14 +12,6 @@ EXPERIEMENT_NAME = 'max_damage_ql'
 EXPERIEMENT_PATH = f'results/{EXPERIEMENT_NAME}'
 TRAIN_STEPS = 50_000
 EVAL_STEPS = 100
-
-class MaxDamagePlayer(Player):
-    def choose_move(self, battle):
-        if battle.available_moves:
-            best_move = max(battle.available_moves, key=lambda move: move.base_power)
-            return self.create_order(best_move)
-        else:
-            return self.choose_random_move(battle)
 
 with open('../team.txt', 'r') as teamf:
     team = teamf.read()
@@ -32,7 +24,7 @@ player = MaxDamagePlayer(
 )
 
 pc = PlayerConfiguration(EXPERIEMENT_NAME, '')
-rl_player = RLPlayerCustom(
+rl_player = RLPlayer(
     opponent=player,
     battle_format="gen8ou",
     team=team,
