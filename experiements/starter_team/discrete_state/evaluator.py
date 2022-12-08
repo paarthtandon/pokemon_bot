@@ -1,11 +1,11 @@
-from pol import GreedyPolicy
+from pol import GreedyPolicy, EpsilonPolicy
 from env import RLPlayer, MaxDamagePlayer
 from poke_env.player import Player, RandomPlayer, SimpleHeuristicsPlayer
 from poke_env.player_configuration import PlayerConfiguration
 from pol import load_q
 
 
-Q_PATH = 'q_learning/results/max_damage_ql/q.json'
+Q_PATH = 'q_learning/results/heuristics_ql/q.json'
 BATTLES = 100
 
 with open('team.txt', 'r') as f:
@@ -42,15 +42,15 @@ def evaluate(q, player, n_battle):
 #     team=team
 # )
 
-OPPONENT = MaxDamagePlayer(
-    battle_format="gen8ou",
-    team=team
-)
-
-# OPPONENT = SimpleHeuristicsPlayer(
+# OPPONENT = MaxDamagePlayer(
 #     battle_format="gen8ou",
 #     team=team
 # )
+
+OPPONENT = SimpleHeuristicsPlayer(
+    battle_format="gen8ou",
+    team=team
+)
 
 pc = PlayerConfiguration('PLAYER', '')
 PLAYER = RLPlayer(

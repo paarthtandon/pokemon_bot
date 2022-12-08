@@ -1,0 +1,27 @@
+Charizard  
+Ability: Blaze  
+EVs: 252 Atk / 4 SpA / 252 Spe  
+Mild Nature  
+- Fire Blast  
+- Body Slam  
+- Air Slash  
+- Dragon Dance  
+
+Venusaur  
+Ability: Overgrow  
+EVs: 4 Atk / 252 SpA / 252 Spe  
+Hasty Nature  
+- Sludge Bomb  
+- Giga Drain  
+- Curse  
+- Body Slam  
+
+Blastoise  
+Ability: Torrent  
+EVs: 252 HP / 252 Atk / 4 SpD  
+Adamant Nature  
+- Aqua Tail  
+- Avalanche  
+- Roar  
+- Body Slam  
+
