@@ -49,20 +49,20 @@ class DQNN:
         lr=0.01,
         checkpoint_path=None
     ):
+        self.device = "cuda" if torch.cuda.is_available() else "cpu"
         self.memory_size = memory_size
         self.minibatch_size = minibatch_size
         self.state_dim = state_dim
         self.action_dim = action_dim
         self.D = deque([])
-        self.Q = Q(state_dim, action_dim)
-        self.Q_hat = Q(state_dim, action_dim)
+        self.Q = Q(state_dim, action_dim).to(self.device)
+        self.Q_hat = Q(state_dim, action_dim).to(self.device)
         self.Q_hat.load_state_dict(self.Q.state_dict())
         self.reset_Q_steps = reset_Q_steps
         self.gamma = gamma
         self.epsilon = epsilon
         self.optimizer = torch.optim.SGD(self.Q.parameters(), lr=lr)
         self.loss = nn.MSELoss()
-        self.device = "cuda" if torch.cuda.is_available() else "cpu"
         self.checkpoint_path = checkpoint_path
         self.losses = []
 
@@ -70,7 +70,7 @@ class DQNN:
         torch.save(self.Q, f'{self.checkpoint_path}/model_{eps}.pt')
     
     def load_checkpoint(self, fname):
-        self.Q = torch.load(fname)
+        self.Q = torch.load(fname).to(device)
 
     def store_sample(self, sample):
         if len(self.D) >= self.memory_size:
@@ -83,7 +83,6 @@ class DQNN:
     def td_target(self, sample):
         if sample.terminal:
             return sample.reward
-        self.Q_hat.to(self.device)
         state_p = torch.tensor(sample.state_p).to(self.device)
         q_values = self.Q_hat(state_p)
         q_max = torch.max(q_values)
@@ -91,9 +90,6 @@ class DQNN:
         return sample.reward + (self.gamma * q_max)
 
     def gradient_step(self):
-        self.Q.to(self.device)
-        self.Q_hat.to(self.device)
-
         batch = self.sample_minibatch()
         targets = torch.tensor([[self.td_target(s)]*self.action_dim for s in batch]).to(self.device)
         preds = self.Q(torch.stack([s.state for s in batch])).to(self.device)
@@ -106,6 +102,7 @@ class DQNN:
 
     def reset_Q_hat(self):
         self.Q_hat = copy.deepcopy(self.Q)
+        self.Q_hat.to(self.device)
     
     def choose_action(self, player, state, epsilon=None):
         possible_moves = range(len(player.current_battle.available_moves))
@@ -120,7 +117,6 @@ class DQNN:
             if random.random() < self.epsilon:
                 return random.randint(0, self.action_dim - 1)
         
-        self.Q.to(self.device)
         state.to(self.device)
         q_vals = self.Q(state)
         mx = float('-inf')
