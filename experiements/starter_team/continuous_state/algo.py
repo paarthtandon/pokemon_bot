@@ -50,7 +50,7 @@ class DQNN:
         lr=0.01,
         checkpoint_path=None
     ):
-        self.device = "cuda" if torch.cuda.is_available() else "cpu"
+        self.device = "cpu" if torch.cuda.is_available() else "cpu"
         self.memory_size = memory_size
         self.minibatch_size = minibatch_size
         self.state_dim = state_dim
