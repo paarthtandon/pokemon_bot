@@ -45,8 +45,8 @@ class DQNN:
         state_dim=9,
         action_dim=7,
         reset_Q_steps=1000,
-        gamma=1,
-        epsilon=0.1,
+        gamma=0.9,
+        epsilon=0.05,
         lr=0.01,
         checkpoint_path=None
     ):
@@ -62,7 +62,7 @@ class DQNN:
         self.reset_Q_steps = reset_Q_steps
         self.gamma = gamma
         self.epsilon = epsilon
-        self.optimizer = torch.optim.SGD(self.Q.parameters(), lr=lr)
+        self.optimizer = torch.optim.Adam(self.Q.parameters(), lr=lr)
         self.loss = nn.MSELoss()
         self.checkpoint_path = checkpoint_path
         self.losses = []
@@ -71,7 +71,7 @@ class DQNN:
         torch.save(self.Q, f'{self.checkpoint_path}/model_{eps}.pt')
     
     def load_checkpoint(self, fname):
-        self.Q = torch.load(fname).to(device)
+        self.Q = torch.load(fname).to(self.device)
 
     def store_sample(self, sample):
         if len(self.D) >= self.memory_size:
