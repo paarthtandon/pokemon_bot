@@ -4,6 +4,7 @@ from collections import deque
 import random
 from env import action_to_showdown, showdown_to_switch
 import copy
+from tqdm import tqdm
 
 class Sample:
     def __init__(
@@ -136,7 +137,7 @@ class DQNN:
         steps = 0
         
         Q_hat_counter = 0
-        for ep in range(episodes):
+        for ep in tqdm(range(episodes)):
             state, _, battle_over, _, = player.step(0)
             while not battle_over:
                 state = torch.tensor(state).to(self.device)
