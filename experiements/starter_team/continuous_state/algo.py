@@ -120,6 +120,8 @@ class DQNN:
             if random.random() < self.epsilon:
                 return random.randint(0, self.action_dim - 1)
         
+        self.Q.to(self.device)
+        state.to(self.device)
         q_vals = self.Q(state)
         mx = float('-inf')
         mx_a = None
