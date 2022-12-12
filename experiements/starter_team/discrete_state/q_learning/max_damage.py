@@ -5,13 +5,13 @@ from poke_env.player import Player
 from poke_env.player_configuration import PlayerConfiguration
 from env import RLPlayerCustom, RLPlayer, MaxDamagePlayer
 from algo import QLearning
+from pol import load_q
 from matplotlib import pyplot as plt
 import json
 
 EXPERIEMENT_NAME = 'max_damage_ql'
 EXPERIEMENT_PATH = f'results/{EXPERIEMENT_NAME}'
 TRAIN_STEPS = 100_000
-EVAL_STEPS = 100
 
 with open('../team.txt', 'r') as teamf:
     team = teamf.read()
@@ -31,8 +31,9 @@ rl_player = RLPlayer(
     player_configuration=pc
 )
 
-ql = QLearning(gamma=1, e_start=0.1, a_start=0.1, e_dec=0, a_dec=0)
+ql = QLearning(gamma=1, e_start=0.01, a_start=0.1, e_dec=0, a_dec=0)
 train_results = ql.train(rl_player, TRAIN_STEPS)
+ql.save_q(f'{EXPERIEMENT_PATH}/q.json')
 
 plt.title(f'QL vs. {EXPERIEMENT_NAME}')
 plt.xlabel('steps')
@@ -54,10 +55,4 @@ with open(f'{EXPERIEMENT_PATH}/train.json', 'w') as f:
         'win_rate': train_results['win_rate']
     }, f)
 
-test_results = ql.eval(rl_player, EVAL_STEPS)
-print(f'Eval: {test_results["n_wins"]}/{test_results["n_battles"]}')
-with open(f'{EXPERIEMENT_PATH}/eval.json', 'w') as f:
-    json.dump(test_results, f)
-
-ql.save_q(f'{EXPERIEMENT_PATH}/q.json')
 rl_player.close()

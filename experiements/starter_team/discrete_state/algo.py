@@ -1,6 +1,7 @@
 from tqdm import tqdm
 from pol import EpsilonPolicy, GreedyPolicy
 import ujson
+from env import showdown_to_switch, action_to_showdown
 
 class QLearning:
 
@@ -40,7 +41,6 @@ class QLearning:
         self.a = max(self.min_a, self.a - self.a_dec)
         self.pol.pol = self.q
         self.pol.e = self.e
-        self.it += 1
     
     def train(self, player, n_steps):
         rewards = []
@@ -50,29 +50,40 @@ class QLearning:
 
         s, _, battle_over, _, = player.step(0)
         for i in tqdm(range(n_steps)):
+            if player.current_battle.available_moves:
+                available_moves = [0, 1, 2, 3]
+            else:
+                available_moves = []
+            available_switches_show = player.current_battle.available_switches
+            available_switches_env = showdown_to_switch(available_switches_show)
+            available_actions_env = available_moves + available_switches_env
+            a = self.pol.act(s, available_actions_env)
+            a_show = action_to_showdown(available_switches_show, a)
+            if battle_over:
+                player.reset()
+            sp, r, battle_over, _ = player.step(a_show)
+            self.q_step(s, a, r, sp)
+            s = sp
+            cur_reward += r
+            
             try:
-                if player.current_battle.available_moves:
-                    a = self.pol.act(s, player.current_battle.available_switches)
+                n_battles = player.n_finished_battles
+                n_wins = player.n_won_battles
+                if n_battles != 0:
+                    win_r = n_wins / n_battles
                 else:
-                    a = self.pol.act(s, player.current_battle.available_switches, only_switch=True)
-                if battle_over:
-                    player.reset()
-                sp, r, battle_over, _ = player.step(a)
-                self.q_step(s, a, r, sp)
-                s = sp
-                cur_reward += r
-                rewards.append(cur_reward)
-                if player.n_finished_battles != 0:
-                    win_rate.append(
-                        player.n_won_battles / player.n_finished_battles
-                    )
+                    win_r = 0
+                if n_battles != 0:
+                    win_rate.append(win_r)
                 else:
                     win_rate.append(0)
                 steps.append(i)
+                rewards.append(cur_reward)
                 if self.it % 1000 == 0:
-                    print(f'Current win rate: {win_rate[-1]} ({player.n_won_battles}/{player.n_finished_battles})')
-            except:
-                print('failed step')
+                    print(f'Current win rate: {win_r} ({n_wins}/{n_battles}) e: {self.e}')
+                self.it += 1
+            except Exception as e:
+                print('failed step', e)
                 continue
         
         n_battles = player.n_finished_battles
@@ -82,30 +93,6 @@ class QLearning:
             'steps': steps,
             'rewards': rewards,
             'win_rate': win_rate,
-            'n_battles': n_battles,
-            'n_wins': n_wins
-        }
-    
-    def eval(self, player, n_battle):
-        player.reset_env()
-        pol = GreedyPolicy(self.pol.pol)
-
-        battles = 0
-        s, _, _, _, = player.step(0)
-        while battles < n_battle:
-            if player.current_battle.available_moves:
-                a = pol.act(s, player.current_battle.available_switches)
-            else:
-                a = pol.act(s, player.current_battle.available_switches, only_switch=True)
-            s, _, over, _ = player.step(a)
-            if over:
-                battles += 1
-                player.reset()
-        
-        n_battles = player.n_finished_battles
-        n_wins = player.n_won_battles
-
-        return {
             'n_battles': n_battles,
             'n_wins': n_wins
         }

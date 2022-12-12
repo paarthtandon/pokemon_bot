@@ -21,7 +21,7 @@ def action_to_showdown(switches, action):
     }
     for i in range(len(switches)):
         if pokemon[action] == switches[i].species:
-            return 4 + i
+            return 16 + i
 
 
 class MaxDamagePlayer(Player):

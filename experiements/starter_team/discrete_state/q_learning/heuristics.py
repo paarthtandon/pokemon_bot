@@ -10,8 +10,7 @@ import json
 
 EXPERIEMENT_NAME = 'heuristics_ql'
 EXPERIEMENT_PATH = f'results/{EXPERIEMENT_NAME}'
-TRAIN_STEPS = 500_000
-EVAL_STEPS = 100
+TRAIN_STEPS = 100_000
 
 with open('../team.txt', 'r') as teamf:
     team = teamf.read()
@@ -32,7 +31,7 @@ rl_player = RLPlayer(
 )
 
 #ql = QLearning(gamma=1, e_start=1, a_start=1, e_dec=1/(TRAIN_STEPS/2), a_dec=1/(TRAIN_STEPS/2), min_e=0.01, min_a=0.01)
-ql = QLearning(gamma=1, e_start=0.05, a_start=0.01, e_dec=0, a_dec=0)
+ql = QLearning(gamma=1, e_start=0.1, a_start=0.1, e_dec=0, a_dec=0)
 train_results = ql.train(rl_player, TRAIN_STEPS)
 
 plt.title(f'QL vs. {EXPERIEMENT_NAME}')
@@ -54,11 +53,6 @@ with open(f'{EXPERIEMENT_PATH}/train.json', 'w') as f:
         'rewards': train_results['rewards'],
         'win_rate': train_results['win_rate']
     }, f)
-
-test_results = ql.eval(rl_player, EVAL_STEPS)
-print(f'Eval: {test_results["n_wins"]}/{test_results["n_battles"]}')
-with open(f'{EXPERIEMENT_PATH}/eval.json', 'w') as f:
-    json.dump(test_results, f)
 
 ql.save_q(f'{EXPERIEMENT_PATH}/q.json')
 rl_player.close()

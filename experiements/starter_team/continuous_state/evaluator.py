@@ -1,9 +1,9 @@
 from algo import DQNN
-from env import RLPlayer
+from env import RLPlayer, MaxDamagePlayer
 from poke_env.player import RandomPlayer
 from poke_env.player_configuration import PlayerConfiguration
 
-MODEL_CHECKPOINT = 'results/random_dqn/checkpoints/model_134779.pt'
+MODEL_CHECKPOINT = 'results/max_damage_dqn/checkpoints/model_final.pt'
 EPISODES = 100
 
 with open('team.txt', 'r') as teamf:
@@ -11,6 +11,10 @@ with open('team.txt', 'r') as teamf:
 
 pc = PlayerConfiguration('OPPONENT', '')
 player = RandomPlayer(
+    battle_format="gen8ou",
+    team=team
+)
+player = MaxDamagePlayer(
     battle_format="gen8ou",
     team=team
 )

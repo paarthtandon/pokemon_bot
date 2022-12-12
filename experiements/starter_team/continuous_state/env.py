@@ -22,7 +22,7 @@ def action_to_showdown(switches, action):
     }
     for i in range(len(switches)):
         if pokemon[action] == switches[i].species:
-            return 4 + i
+            return 16 + i
 
 
 class MaxDamagePlayer(Player):
@@ -37,7 +37,7 @@ class RLPlayer(Gen8EnvSinglePlayer):
 
     def calc_reward(self, last_battle, current_battle) -> float:
         return self.reward_computing_helper(
-            current_battle, hp_value=1.0, fainted_value=10.0, victory_value=100.0
+            current_battle, hp_value=0.0, fainted_value=0.0, victory_value=1.0
         )
 
     def embed_battle(self, battle):
@@ -69,13 +69,29 @@ class RLPlayer(Gen8EnvSinglePlayer):
             op_team_hp[i] = p.current_hp_fraction
         embedding += op_team_hp
 
-        embedding.append(int(battle.finished))
-
         return np.array(embedding, dtype=np.float32)
+
+    # def embed_battle(self, battle):
+    #     def hp_bin(hp):
+    #         return int(3 * hp)
+
+    #     pokemon = {
+    #         'charizard': 0.0,
+    #         'venusaur': 0.5,
+    #         'blastoise': 1.0
+    #     }
+
+    #     my_mon = pokemon[battle.active_pokemon.species]
+    #     opponent_mon = pokemon[battle.opponent_active_pokemon.species]
+
+    #     my_hp = battle.active_pokemon.current_hp_fraction
+    #     opponent_hp = battle.opponent_active_pokemon.current_hp_fraction
+
+    #     return np.array([my_mon, opponent_mon, my_hp, opponent_hp], dtype=np.float32)
     
     def describe_embedding(self) -> Space:
-        low = [0, 0, 0, 0, 0, 0, 0, 0, 0]
-        high = [2, 1, 1, 1, 2, 1, 1, 1, 1]
+        low = [0, 0, 0, 0, 0, 0, 0, 0]
+        high = [2, 1, 1, 1, 2, 1, 1, 1]
         return Box(
             np.array(low, dtype=np.float32),
             np.array(high, dtype=np.float32),

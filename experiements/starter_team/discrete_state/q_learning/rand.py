@@ -11,7 +11,6 @@ import json
 EXPERIEMENT_NAME = 'random_ql'
 EXPERIEMENT_PATH = f'results/{EXPERIEMENT_NAME}'
 TRAIN_STEPS = 50_000
-EVAL_STEPS = 100
 
 with open('../team.txt', 'r') as teamf:
     team = teamf.read()
@@ -54,11 +53,5 @@ with open(f'{EXPERIEMENT_PATH}/train.json', 'w') as f:
         'win_rate': train_results['win_rate']
     }, f)
 
-test_results = ql.eval(rl_player, EVAL_STEPS)
-print(f'Eval: {test_results["n_wins"]}/{test_results["n_battles"]}')
-with open(f'{EXPERIEMENT_PATH}/eval.json', 'w') as f:
-    json.dump(test_results, f)
-
-print(ql.q)
 ql.save_q(f'{EXPERIEMENT_PATH}/q.json')
 rl_player.close()

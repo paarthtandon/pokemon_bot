@@ -1,11 +1,11 @@
 from pol import GreedyPolicy, EpsilonPolicy
-from env import RLPlayer, MaxDamagePlayer
+from env import RLPlayer, MaxDamagePlayer, action_to_showdown, showdown_to_switch
 from poke_env.player import Player, RandomPlayer, SimpleHeuristicsPlayer
 from poke_env.player_configuration import PlayerConfiguration
 from pol import load_q
 
 
-Q_PATH = 'q_learning/results/heuristics_ql/q.json'
+Q_PATH = 'q_learning/results/max_damage_ql/q.json'
 BATTLES = 100
 
 with open('team.txt', 'r') as f:
@@ -19,12 +19,15 @@ def evaluate(q, player, n_battle):
     s, _, _, _, = player.step(0)
     print(f'Running battle: {battles}')
     while battles < n_battle:
-        if player.current_battle.available_moves:
-            a = pol.act(s, player.current_battle.available_switches)
-        else:
-            a = pol.act(s, player.current_battle.available_switches, only_switch=True)
-        s, _, over, _ = player.step(a)
-        if over:
+        available_moves = [0, 1, 2, 3]
+        available_switches_show = player.current_battle.available_switches
+        available_switches_env = showdown_to_switch(available_switches_show)
+        available_actions_env = available_moves + available_switches_env
+        a = pol.act(s, available_actions_env)
+        a_show = action_to_showdown(available_switches_show, a)
+        sp, _, battle_over, _ = player.step(a_show)
+        s = sp
+        if battle_over:
             battles += 1
             player.reset()
             print(f'Running battle: {battles}')
@@ -37,20 +40,22 @@ def evaluate(q, player, n_battle):
         'n_wins': n_wins
     }
 
+pc = PlayerConfiguration('OPPONENT', '')
 # OPPONENT = RandomPlayer(
 #     battle_format="gen8ou",
 #     team=team
 # )
 
-# OPPONENT = MaxDamagePlayer(
+OPPONENT = MaxDamagePlayer(
+    battle_format="gen8ou",
+    team=team,
+    player_configuration=pc
+)
+
+# OPPONENT = SimpleHeuristicsPlayer(
 #     battle_format="gen8ou",
 #     team=team
 # )
-
-OPPONENT = SimpleHeuristicsPlayer(
-    battle_format="gen8ou",
-    team=team
-)
 
 pc = PlayerConfiguration('PLAYER', '')
 PLAYER = RLPlayer(
