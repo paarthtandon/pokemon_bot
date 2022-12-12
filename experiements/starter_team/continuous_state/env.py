@@ -37,7 +37,7 @@ class RLPlayer(Gen8EnvSinglePlayer):
 
     def calc_reward(self, last_battle, current_battle) -> float:
         return self.reward_computing_helper(
-            current_battle, hp_value=0.0, fainted_value=0.0, victory_value=1.0
+            current_battle, hp_value=1.0, fainted_value=0.0, victory_value=0.0
         )
 
     def embed_battle(self, battle):
@@ -50,7 +50,7 @@ class RLPlayer(Gen8EnvSinglePlayer):
         }
 
         my_active = battle.active_pokemon
-        embedding.append(pokemon[my_active.species])
+        embedding.append(pokemon[my_active.species] / 2)
 
         my_team = list(battle.team.values())
         my_team_hp = [1, 1, 1]
@@ -60,7 +60,7 @@ class RLPlayer(Gen8EnvSinglePlayer):
         embedding += my_team_hp
 
         op_active = battle.opponent_active_pokemon
-        embedding.append(pokemon[op_active.species])
+        embedding.append(pokemon[op_active.species] / 2)
 
         op_team = list(battle.opponent_team.values())
         op_team_hp = [1, 1, 1]

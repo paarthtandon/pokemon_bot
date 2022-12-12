@@ -10,7 +10,7 @@ import json
 
 EXPERIEMENT_NAME = 'random_ql'
 EXPERIEMENT_PATH = f'results/{EXPERIEMENT_NAME}'
-TRAIN_STEPS = 50_000
+TRAIN_STEPS = 25_000
 
 with open('../team.txt', 'r') as teamf:
     team = teamf.read()
@@ -30,7 +30,7 @@ rl_player = RLPlayer(
     player_configuration=pc
 )
 
-ql = QLearning(gamma=1, e_start=0.1, a_start=0.1, e_dec=0, a_dec=0)
+ql = QLearning(gamma=0.5, e_start=0.1, a_start=0.1, e_dec=0, a_dec=0)
 train_results = ql.train(rl_player, TRAIN_STEPS)
 
 plt.title(f'QL vs. {EXPERIEMENT_NAME}')
