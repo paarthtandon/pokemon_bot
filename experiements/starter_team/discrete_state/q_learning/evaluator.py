@@ -1,16 +1,16 @@
+import sys
+sys.path.append('..')
+
 from pol import GreedyPolicy, EpsilonPolicy
 from env import RLPlayer, MaxDamagePlayer, action_to_showdown, showdown_to_switch
 from poke_env.player import Player, RandomPlayer, SimpleHeuristicsPlayer
 from poke_env.player_configuration import PlayerConfiguration
 from pol import load_q
 
-
-Q_PATH = 'q_learning/results/max_damage_ql/q.json'
 BATTLES = 100
 
-with open('team.txt', 'r') as f:
+with open('../team.txt', 'r') as f:
     team = f.read()
-q = load_q(Q_PATH)
 
 def evaluate(q, player, n_battle):
     pol = GreedyPolicy(q)
@@ -40,24 +40,13 @@ def evaluate(q, player, n_battle):
         'n_wins': n_wins
     }
 
-pc = PlayerConfiguration('OPPONENT', '')
-# OPPONENT = RandomPlayer(
-#     battle_format="gen8ou",
-#     team=team
-# )
-
-OPPONENT = MaxDamagePlayer(
+pc = PlayerConfiguration('OPPONENT0', '')
+OPPONENT = RandomPlayer(
     battle_format="gen8ou",
-    team=team,
-    player_configuration=pc
+    team=team
 )
 
-# OPPONENT = SimpleHeuristicsPlayer(
-#     battle_format="gen8ou",
-#     team=team
-# )
-
-pc = PlayerConfiguration('PLAYER', '')
+pc = PlayerConfiguration('PLAYER0', '')
 PLAYER = RLPlayer(
     opponent=OPPONENT,
     battle_format="gen8ou",
@@ -65,6 +54,48 @@ PLAYER = RLPlayer(
     player_configuration=pc
 )
 
+q = load_q('results/final_modals/random_q.json')
 
 test_results = evaluate(q, PLAYER, BATTLES)
-print(f'Eval: {test_results["n_wins"]}/{test_results["n_battles"]}')
+print(f'Random: {test_results["n_wins"]}/{test_results["n_battles"]}')
+
+pc = PlayerConfiguration('OPPONENT1', '')
+OPPONENT = MaxDamagePlayer(
+    battle_format="gen8ou",
+    team=team,
+    player_configuration=pc
+)
+
+pc = PlayerConfiguration('PLAYER1', '')
+PLAYER = RLPlayer(
+    opponent=OPPONENT,
+    battle_format="gen8ou",
+    team=team,
+    player_configuration=pc
+)
+
+q = load_q('results/final_modals/max_damage_q.json')
+
+test_results = evaluate(q, PLAYER, BATTLES)
+print(f'Max Damage: {test_results["n_wins"]}/{test_results["n_battles"]}')
+
+pc = PlayerConfiguration('OPPONENT2', '')
+OPPONENT = SimpleHeuristicsPlayer(
+    battle_format="gen8ou",
+    team=team,
+    player_configuration=pc
+)
+
+pc = PlayerConfiguration('PLAYER2', '')
+PLAYER = RLPlayer(
+    opponent=OPPONENT,
+    battle_format="gen8ou",
+    team=team,
+    player_configuration=pc
+)
+
+q = load_q('results/final_modals/heuristics_q.json')
+
+test_results = evaluate(q, PLAYER, BATTLES)
+print(f'Heuristics: {test_results["n_wins"]}/{test_results["n_battles"]}')
+

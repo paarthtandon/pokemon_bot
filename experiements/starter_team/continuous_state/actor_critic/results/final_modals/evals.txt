@@ -1,0 +1,5 @@
+Actor Critic
+
+Random: 92%
+Max-Damage: 60%
+Heuristics: 20%

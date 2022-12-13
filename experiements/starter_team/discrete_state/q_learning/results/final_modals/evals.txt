@@ -1,0 +1,5 @@
+Q-Learning
+
+Random: 87%
+Max-Damage: 57%
+Heuristics: 16%

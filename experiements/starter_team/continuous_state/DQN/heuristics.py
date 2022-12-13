@@ -5,7 +5,7 @@ import sys
 sys.path.append('..')
 
 from env import RLPlayer
-from poke_env.player import RandomPlayer
+from poke_env.player import SimpleHeuristicsPlayer
 from poke_env.player_configuration import PlayerConfiguration
 from algo import DQNN
 from matplotlib import pyplot as plt
@@ -20,13 +20,13 @@ with open('team.txt', 'r') as teamf:
     team = teamf.read()
 
 pc = PlayerConfiguration(f'{EXPERIEMENT_NAME}_op', '')
-player = RandomPlayer(
+player = SimpleHeuristicsPlayer(
     battle_format="gen8ou",
     team=team,
     player_configuration=pc
 )
 
-pc = PlayerConfiguration(EXPERIEMENT_NAME, '')
+pc = PlayerConfiguration(f'{EXPERIEMENT_NAME}', '')
 rl_player = RLPlayer(
     opponent=player,
     battle_format="gen8ou",
@@ -44,10 +44,10 @@ learner = DQNN(
     action_dim=7,
     reset_Q_steps=400,
     gamma=0.5,
-    epsilon_start=1,
+    epsilon_start=0.01,
     epsilon_min = 0.01,
     epsolon_dec = 0.9995,
-    lr=1e-4,
+    lr=1e-2,
     checkpoint_path=f'{EXPERIEMENT_PATH}/checkpoints'
 )
 train_results = learner.train(rl_player, TRAIN_EPISODES)

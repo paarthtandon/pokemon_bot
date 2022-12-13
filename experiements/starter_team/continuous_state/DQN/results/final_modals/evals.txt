@@ -1,0 +1,5 @@
+DQN
+
+Random: 88%
+Max-Damage: 46%
+Heuristics: 10%
