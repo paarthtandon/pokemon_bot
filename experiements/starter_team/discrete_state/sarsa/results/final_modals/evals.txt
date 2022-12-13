@@ -1,4 +1,4 @@
-Q-Learning
+SARSA
 
 Random: 87%
 Max-Damage: 71%
