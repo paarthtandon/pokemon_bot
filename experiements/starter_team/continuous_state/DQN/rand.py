@@ -10,7 +10,7 @@ import json
 
 EXPERIEMENT_NAME = 'random_dqn'
 EXPERIEMENT_PATH = f'results/{EXPERIEMENT_NAME}'
-TRAIN_EPISODES = 1000
+TRAIN_EPISODES = 5000
 EVAL_EPISODES = 10
 
 with open('team.txt', 'r') as teamf:
@@ -19,22 +19,17 @@ with open('team.txt', 'r') as teamf:
 pc = PlayerConfiguration(f'{EXPERIEMENT_NAME}_op', '')
 player = RandomPlayer(
     battle_format="gen8ou",
-    team=team
+    team=team,
+    player_configuration=pc
 )
 
 pc = PlayerConfiguration(EXPERIEMENT_NAME, '')
 rl_player = RLPlayer(
     opponent=player,
     battle_format="gen8ou",
-    team=team
+    team=team,
+    player_configuration=pc
 )
-
-"""
-def calc_reward(self, last_battle, current_battle) -> float:
-    return self.reward_computing_helper(
-        current_battle, hp_value=1.0, fainted_value=10.0, victory_value=100.0
-    )
-"""
 
 action_space = rl_player.action_space.n
 print(action_space)

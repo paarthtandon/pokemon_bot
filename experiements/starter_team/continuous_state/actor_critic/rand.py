@@ -19,14 +19,16 @@ with open('team.txt', 'r') as teamf:
 pc = PlayerConfiguration(f'{EXPERIEMENT_NAME}_op', '')
 player = RandomPlayer(
     battle_format="gen8ou",
-    team=team
+    team=team,
+    player_configuration=pc
 )
 
 pc = PlayerConfiguration(EXPERIEMENT_NAME, '')
 rl_player = RLPlayer(
     opponent=player,
     battle_format="gen8ou",
-    team=team
+    team=team,
+    player_configuration=pc
 )
 
 action_space = rl_player.action_space.n

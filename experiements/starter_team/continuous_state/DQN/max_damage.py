@@ -1,3 +1,6 @@
+import sys
+sys.path.append('..')
+
 from env import RLPlayer, MaxDamagePlayer
 from poke_env.player_configuration import PlayerConfiguration
 from algo import DQNN
@@ -14,14 +17,16 @@ with open('team.txt', 'r') as teamf:
 pc = PlayerConfiguration(f'{EXPERIEMENT_NAME}_op', '')
 player = MaxDamagePlayer(
     battle_format="gen8ou",
-    team=team
+    team=team,
+    player_configuration=pc
 )
 
 pc = PlayerConfiguration(EXPERIEMENT_NAME, '')
 rl_player = RLPlayer(
     opponent=player,
     battle_format="gen8ou",
-    team=team
+    team=team,
+    player_configuration=pc
 )
 
 learner = DQNN(
@@ -32,7 +37,7 @@ learner = DQNN(
     reset_Q_steps=400,
     gamma=0.5,
     epsilon_start=1,
-    epsilon_min = 0.1,
+    epsilon_min = 0.01,
     epsolon_dec = 0.9995,
     lr=1e-4,
     checkpoint_path=f'{EXPERIEMENT_PATH}/checkpoints'

@@ -18,14 +18,16 @@ with open('team.txt', 'r') as teamf:
 pc = PlayerConfiguration(f'{EXPERIEMENT_NAME}_op', '')
 player = MaxDamagePlayer(
     battle_format="gen8ou",
-    team=team
+    team=team,
+    player_configuration=pc
 )
 
 pc = PlayerConfiguration(EXPERIEMENT_NAME, '')
 rl_player = RLPlayer(
     opponent=player,
     battle_format="gen8ou",
-    team=team
+    team=team,
+    player_configuration=pc
 )
 
 action_space = rl_player.action_space.n
@@ -35,8 +37,8 @@ learner = AC(
     state_dim=8,
     action_dim=7,
     gamma=0.5,
-    actor_lr=1e-1,
-    critic_lr=1e-1,
+    actor_lr=1e-3,
+    critic_lr=1e-3,
     checkpoint_path=f'{EXPERIEMENT_PATH}/checkpoints'
 )
 train_results = learner.train(rl_player, TRAIN_EPISODES)
