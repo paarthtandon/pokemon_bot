@@ -6,4 +6,3 @@ These experiments were conducted using [poke-env](https://poke-env.readthedocs.i
 This repo was originally created for a final project in CS 687 at UMass Amherst.
 The final report for this project is available in this repo (report.pdf).
 This report contains more detailed information about the experiments that were conducted.
-I plan on conducting further experimentation, despite the course being over.
